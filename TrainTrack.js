@@ -1,20 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const amtrak = require("amtrak");
-const app = express();
 const path = require("path");
-const portNumber = 5001;
+const router = express.Router();
 
-app.set("view engine", "ejs");
-app.set("views", path.resolve(__dirname, "templates"));
 
-app.listen(portNumber);
-console.log(`Web server started and running at http://localhost:${portNumber}`);
-app.get("/", (request, response) => {
+router.get("/", (request, response) => {
   response.render("index", null);
 });
 
-app.get("/viewTrains", (request, response) => {
+router.get("/viewTrains", (request, response) => {
   displayTrains().then((result) => {
     const variable = { table: result };
     response.render("viewTrains", variable);
@@ -23,7 +18,7 @@ app.get("/viewTrains", (request, response) => {
 
 async function displayTrains() {
   let table =
-    "<table border = '1'><tr><th>Route Name</th><th>Train Number</th><th>Origin</th><th>Destination</th><th>Scheduled Departure Time</th></tr>";
+    "<table border = '1'><tr><th>Route Name</th><th>Train Number</th><th>Origin</th><th>Destination</th><th>Scheduled Departure Time From NCR</th></tr>";
   let station = await amtrak.fetchStation("NCR");
   for (let i = 0; i < station.NCR.trains.length; i++) {
     const id = station.NCR.trains[i];
@@ -41,3 +36,5 @@ async function displayTrains() {
   }
   return table;
 }
+
+module.exports = router;

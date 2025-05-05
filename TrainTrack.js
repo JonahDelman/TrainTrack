@@ -9,6 +9,10 @@ router.get("/", (request, response) => {
   response.render("index", null);
 });
 
+router.get("/book", (request, response) => {
+  response.render("book", null);
+});
+
 router.get("/viewTrains", (request, response) => {
   displayTrains().then((result) => {
     const variable = { table: result };

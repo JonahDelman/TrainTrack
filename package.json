@@ -6,6 +6,9 @@
   "bugs": {
     "url": "https://github.com/JonahDelman/TrainTrack/issues"
   },
+  "scripts":{
+    "start": "yarn start"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JonahDelman/TrainTrack.git"

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initialscale=1.0">
+	<title>Admin Cancel</title>
+</head>
+
+<body>
+	<h1>Removing All Applicants</h1>
+	<form action="/cancellation" method = "post">
+        <fieldset>
+            <strong>Train Number: </strong><input type="text" name ="train"><br>
+        </fieldset><br>
+        <input type="submit" value="Submit Request">
+    </form>
+    <hr>
+    <a href="/">Return to Home</a>
+    <a href="/viewTrains">Find Trains</a>
+    <script>
+        window.onsubmit = () => {return window.confirm("Are you sure you want to cancel this train?");};
+    </script>
+</body>
+
+</html>

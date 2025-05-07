@@ -4,12 +4,12 @@
 <head>
 	<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initialscale=1.0">
-	<title>Admin Passengers</title>
+	<title>Admin Cancel</title>
 </head>
 
 <body>
-	<h1>Display Passengers By Train</h1>
-	<form action="/processAdminPassengers" method = "post">
+	<h1>Removing All Applicants</h1>
+	<form action="/cancellation" method = "post">
         <fieldset>
             <strong>Train Number: </strong><input type="text" name ="train"><br>
         </fieldset><br>
@@ -18,6 +18,9 @@
     <hr>
     <a href="/">Return to Home</a>
     <a href="/viewTrains">Find Trains</a>
+    <script>
+        window.onsubmit = () => {return window.confirm("Are you sure you want to cancel this train?");};
+    </script>
 </body>
 
 </html>

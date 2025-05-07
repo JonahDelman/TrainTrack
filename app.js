@@ -9,6 +9,8 @@ app.set("views", path.resolve(__dirname, "templates"));
 
 app.use("/", trainTrack);
 
+app.use(express.static(path.join(__dirname, 'style')));
+
 process.stdin.setEncoding("utf8");
 app.listen(portNumber);
 console.log(`Web server started and running at http://localhost:${portNumber}`);

@@ -1,0 +1,23 @@
+html {
+    font-size: 14px;
+    --font: 'Roboto', 'Arial Narrow', Arial;
+    font-family: var(--font);
+}
+
+body{
+    font-size: 1.1rem;
+    background-color: lightgray;
+}
+
+hr{
+    border-style: groove;
+    border-color: black;
+}
+
+th{
+    background-color: white;
+}
+
+tr td {
+    background-color: lightblue;
+}

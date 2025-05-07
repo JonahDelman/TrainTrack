@@ -10,6 +10,7 @@ const uri = process.env.MONGO_CONNECTION_STRING;
 const databaseName = process.env.MONGO_DB_NAME;
 const collectionName = process.env.MONGO_COLLECTION;
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { DateTime } = require("luxon");
 const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
 
 async function insert(passenger) {
@@ -84,7 +85,8 @@ async function displayTrains() {
   let table =
     "<table border = '1'><tr><th>Route Name</th><th>Train Number</th><th>Origin</th><th>Destination</th><th>Scheduled Departure Time From New Carrollton</th></tr>";
   let trainData = await getTrainData();
-  trainData.sort((train1, train2) => new Date(train1.departure) - new Date(train2.departure));
+  trainData.sort((train1, train2) => DateTime.fromFormat(train1.departure, DateTime.DATETIME_MED) -
+  DateTime.fromFormat(train2.departure, DateTime.DATETIME_MED));
   trainData.forEach(train => table += `<tr><td>${train.routeName}</td><td>${train.trainNum}</td><td>${train.origName}</td><td>${train.destName}
     </td><td>${train.departure}</td></tr>`);
     return table;
@@ -99,12 +101,12 @@ async function getTrainData(){
     let trainData = await amtrak.fetchTrain(id);
     const trains = Object.values(trainData);
     const train = trains[0][0];
-    const departure = new Date(
+    const departure = DateTime.fromISO(
       train.stations.find((station) => station.name === "New Carrollton").schDep
     );
-    let currTime = new Date();
+    let currTime = DateTime.now();
     if (departure > currTime) {
-      train.departure = departure.toLocaleString();
+      train.departure = departure.toLocaleString(DateTime.DATETIME_MED);
       arr.push(train);
     }
   }

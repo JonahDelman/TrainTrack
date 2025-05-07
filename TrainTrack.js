@@ -45,8 +45,20 @@ router.get("/adminTrain", (request, response) => {
   });
 });
 
-
 router.use(bodyParser.urlencoded({ extended: false }));
+
+router.get("/adminPassenger", (request, response) => {
+  response.render("adminPassenger", null);
+});
+
+router.post("/passengerInfo", (request, response) => {
+  const email = request.body.email;
+  displayPassengerInfo(email).then((result) => {
+    const variable = { table: result };
+    response.render("passengerInfo", variable);
+  });
+});
+
 router.post("/confirmation", (request, response) => {
   verifyTrain(request.body.train).then(valid => {
     if (valid){
@@ -136,5 +148,24 @@ async function displayAdminTrains() {
     return table;
 }
 
+async function displayPassengerInfo(email) {
+  let table =
+    "<table border = '1'><tr><th>Name</th><th>Train Number</th><th>Passenger Count</th><th>Luggage Count</th><th>Description</th></tr>";
+  await client.connect();
+  const database = client.db(databaseName);
+  const collection = database.collection(collectionName);
+  let filter = { email: email };
+  const data = await collection
+        .find(filter)
+        .toArray();
+
+  for (let i = 0; i < data.length; i++){
+    let item = data[i];
+    table += `<tr><td>${item.name}</td><td>${item.train}</td><td>${item.passengerCount}</td><td>${item.luggageCount}
+    </td><td>${item.description}</td></tr>`;
+  }
+  table += "</table>";
+  return table;
+}
 
 module.exports = router;

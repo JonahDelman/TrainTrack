@@ -103,10 +103,10 @@ async function getTrainData(){
     const train = trains[0][0];
     const departure = DateTime.fromISO(
       train.stations.find((station) => station.name === "New Carrollton").schDep
-    );
-    let currTime = DateTime.now();
+    , { zone: 'America/New_York' });
+    let currTime = DateTime.now().setZone('America/New_York');
     if (departure > currTime) {
-      train.departure = departure.toLocaleString(DateTime.DATETIME_MED);
+      train.departure = departure.setZone('America/New_York').toLocaleString(DateTime.DATETIME_MED);
       arr.push(train);
     }
   }

@@ -142,7 +142,7 @@ router.post("/cancellation", async (request, response) => {
       const collection = database.collection(collectionName);
       let filter = { train: request.body.train };
       let result = await collection.deleteMany(filter);
-      const variable = {numDeleted : "Train Successfully Cancelled, " + result.deletedCount + " Passengers Removed", trainNum : request.body.train};
+      const variable = {numDeleted : "Train Successfully Cancelled, " + result.deletedCount + " Reservations Removed", trainNum : request.body.train};
       response.render("cancellation", variable);
     } catch (error) {
       console.error(error);

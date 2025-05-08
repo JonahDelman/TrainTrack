@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const portNumber = process.argv[2] || 5001;const trainTrack = require("./TrainTrack");
+const portNumber = process.argv[2] || 5001;
+const trainTrack = require("./TrainTrack");
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "templates"));

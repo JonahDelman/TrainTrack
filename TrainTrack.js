@@ -28,8 +28,15 @@ router.get("/", (request, response) => {
   response.render("index", null);
 });
 
-router.get("/book", (request, response) => {
-  response.render("book", null);
+router.get("/book", async (request, response) => {
+  const trainData = await getTrainData();
+  let dropdown = "";
+  for(let i = 0; i < trainData.length; i++){
+    const train = trainData[i];
+    dropdown += `<option>${train.routeName} ${train.trainNum}</option>`
+  }
+  const variable = { dropdown: dropdown };
+  response.render("book", variable);
 });
 
 router.get("/viewTrains", (request, response) => {
@@ -70,19 +77,9 @@ router.get("/reviewReservation", (request, response) => {
 
 router.post("/confirmation", async (request, response) => {
   try {
-    const valid = await verifyTrain(request.body.train);
-    if (!valid) {
-      return response.render("confirmation", {
-        name: "NONE",
-        email: "NONE",
-        passengerCount: "NONE",
-        train: "Invalid Train Selected. Please Try Booking Again",
-        luggageCount: "NONE",
-        description: "NONE",
-        id: "NONE",
-      });
-    }
     let id;
+    const routeName = request.body.train.match(/[a-zA-Z\s]+/)[0];
+    const trainNum = request.body.train.match(/\d+/)[0];
     do {
       id = Math.floor(Math.random() * 900_000_000) + 100_000_000;
     } while (await idExists(id));
@@ -90,13 +87,23 @@ router.post("/confirmation", async (request, response) => {
       name:           request.body.firstName,
       email:          request.body.email,
       passengerCount: request.body.passengerCount,
-      train:          request.body.train,
+      train:          trainNum,
       luggageCount:   request.body.luggageCount,
       description:    request.body.description,
       id,
     };
     await insert(reservation);
-    response.render("confirmation", reservation);
+    const display = {
+      name:           request.body.firstName,
+      email:          request.body.email,
+      passengerCount: request.body.passengerCount,
+      route:          routeName,
+      train:          trainNum,
+      luggageCount:   request.body.luggageCount,
+      description:    request.body.description,
+      id,
+    };
+    response.render("confirmation", display);
   } catch (error) {
     console.error(error);
   }

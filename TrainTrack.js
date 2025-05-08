@@ -134,6 +134,23 @@ router.get("/adminCancel", (request, response) => {
   response.render("adminCancel", null);
 });
 
+router.get("/adminCancelAll", (request, response) => {
+  response.render("adminCancelAll", null);
+});
+
+router.post("/allCancelled", async (request, response) => {
+    try {
+      await client.connect();
+      const database = client.db(databaseName);
+      const collection = database.collection(collectionName);
+      let result = await collection.deleteMany({});
+      const variable = {numDeleted : result.deletedCount};
+      response.render("allCancelled", variable);
+    } catch (error) {
+      console.error(error);
+    }
+});
+
 router.post("/cancellation", async (request, response) => {
   if (await verifyTrain(request.body.train)) {
     try {

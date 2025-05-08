@@ -72,7 +72,7 @@ router.post("/confirmation", async (request, response) => {
   try {
     const valid = await verifyTrain(request.body.train);
     if (!valid) {
-      return res.render("confirmation", {
+      return response.render("confirmation", {
         name: "NONE",
         email: "NONE",
         passengerCount: "NONE",

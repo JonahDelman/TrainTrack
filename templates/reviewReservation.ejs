@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lookup By ID</title>
+  </head>
+
+  <body>
+    <h1>Lookup By ID</h1>
+    <form
+      method="POST"
+      action="/passengerInfoById"
+    >
+      <fieldset>
+        <div>
+          <label for="id">Enter Id For Lookup:</label>
+          <input type="text" id="id" name="id" required />
+      </fieldset>
+      <br />
+      <div class="buttons">
+        <button type="reset">Reset</button>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <hr />
+    <a href="/">Return to Home</a>
+    <a href="/viewTrains">Find Trains</a>
+  </body>
+
+</html>

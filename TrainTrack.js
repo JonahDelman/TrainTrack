@@ -56,33 +56,50 @@ router.post("/passengerInfo", (request, response) => {
   });
 });
 
-router.post("/confirmation", (request, response) => {
-  verifyTrain(request.body.train)
-    .then((valid) => {
-      if (valid) {
-        const reservation = {
-          name: request.body.firstName,
-          email: request.body.email,
-          passengerCount: request.body.passengerCount,
-          train: request.body.train,
-          luggageCount: request.body.luggageCount,
-          description: request.body.description,
-        };
-        insert(reservation);
-        response.render("confirmation", reservation);
-      } else {
-        const reservation = {
-          name: "NONE",
-          email: "NONE",
-          passengerCount: "NONE",
-          train: "Invalid Train Selected. Please Try Booking Again",
-          luggageCount: "NONE",
-          description: "NONE",
-        };
-        response.render("confirmation", reservation);
-      }
-    })
-    .catch((error) => console.error(error));
+router.post("/passengerInfoById", (request, response) => {
+  const id = Number(request.body.id);
+  displayPassengerInfoById(id).then((result) => {
+    const variable = { table: result };
+    response.render("displayById", variable);
+  });
+});
+
+router.get("/reviewReservation", (request, response) => {
+  response.render("reviewReservation", null);
+});
+
+router.post("/confirmation", async (request, response) => {
+  try {
+    const valid = await verifyTrain(request.body.train);
+    if (!valid) {
+      return res.render("confirmation", {
+        name: "NONE",
+        email: "NONE",
+        passengerCount: "NONE",
+        train: "Invalid Train Selected. Please Try Booking Again",
+        luggageCount: "NONE",
+        description: "NONE",
+        id: "NONE",
+      });
+    }
+    let id;
+    do {
+      id = Math.floor(Math.random() * 900_000_000) + 100_000_000;
+    } while (await idExists(id));
+    const reservation = {
+      name:           request.body.firstName,
+      email:          request.body.email,
+      passengerCount: request.body.passengerCount,
+      train:          request.body.train,
+      luggageCount:   request.body.luggageCount,
+      description:    request.body.description,
+      id,
+    };
+    await insert(reservation);
+    response.render("confirmation", reservation);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 router.get("/adminPassenger", (request, response) => {
@@ -217,7 +234,7 @@ async function arrayOfPassengers(trainNum) {
 }
 async function displayPassengerInfo(email) {
   let table =
-    "<table border = '1'><tr><th>Name</th><th>Train Number</th><th>Passenger Count</th><th>Luggage Count</th><th>Description</th></tr>";
+    "<table border = '1'><tr><th>Name</th><th>Train Number</th><th>Passenger Count</th><th>Luggage Count</th><th>Description</th><th>ID</th></tr>";
   await client.connect();
   const database = client.db(databaseName);
   const collection = database.collection(collectionName);
@@ -229,10 +246,43 @@ async function displayPassengerInfo(email) {
   for (let i = 0; i < data.length; i++){
     let item = data[i];
     table += `<tr><td>${item.name}</td><td>${item.train}</td><td>${item.passengerCount}</td><td>${item.luggageCount}
-    </td><td>${item.description}</td></tr>`;
+    </td><td>${item.description}</td><td>${item.id}</td></tr>`;
   }
   table += "</table>";
   return table;
+}
+
+async function displayPassengerInfoById(id) {
+  let table =
+    "<table border = '1'><tr><th>Name</th><th>Email</th><th>Train Number</th><th>Passenger Count</th><th>Luggage Count</th><th>Description</th><th>ID</th></tr>";
+  await client.connect();
+  const database = client.db(databaseName);
+  const collection = database.collection(collectionName);
+  let filter = { id: id };
+  const data = await collection
+        .find(filter)
+        .toArray();
+
+  for (let i = 0; i < data.length; i++){
+    let item = data[i];
+    table += `<tr><td>${item.name}</td><td>${item.email}</td><td>${item.train}</td><td>${item.passengerCount}</td><td>${item.luggageCount}
+    </td><td>${item.description}</td><td>${item.id}</td></tr>`;
+  }
+  table += "</table>";
+  return table;
+}
+
+async function idExists(numericId) {
+  try{
+  await client.connect();
+  const database = client.db(databaseName);
+  const collection = database.collection(collectionName);
+  const query = { id: numericId };
+  const doc   = await collection.findOne(query);
+  return doc !== null;
+  } catch(error){
+    console.log(error);
+  }
 }
 
 module.exports = router;
